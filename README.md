@@ -129,6 +129,4 @@ The custom startup prediction API was also manually verified through its health 
         ├── docker-compose.yml
         └── Dockerfile
 
-## 9. Acknowledgements
-
-<small>Built upon the MIT-licensed Startup Success Prediction project by Mohammed Hasnaine and the MIT-licensed MLOps template by Maniswaroop M; original licences and attribution are retained.</small>
+<small>Built upon the dataset by Mohammed Hasnaine and the MLOps template by Maniswaroop M; original licences and attribution are retained.</small>
