@@ -1,0 +1,34 @@
+digraph arch {
+  rankdir=LR; fontname="Helvetica"; nodesep=0.35; ranksep=0.7;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, margin="0.15,0.08"];
+  edge [fontname="Helvetica", fontsize=9];
+
+  user [label="User\n(browser)", shape=ellipse, fillcolor="#ffffff"];
+
+  subgraph cluster_fe { label="Frontend service  (Streamlit, container 1)"; style="rounded,dashed"; color="#1f4e79";
+    ui [label="Pages: Predict · Batch ·\nPipeline Console · Monitoring", fillcolor="#dbe9f6"];
+    cl [label="client.py\n(REST only, BACKEND_URL)", fillcolor="#dbe9f6"]; }
+
+  subgraph cluster_be { label="Backend service  (FastAPI, container 2)"; style="rounded,dashed"; color="#2e7d32";
+    api [label="api.py\nvalidation · errors · request-id", fillcolor="#e8f5e9"];
+    pred [label="predictor.py\nmodel.joblib (sklearn Pipeline)", fillcolor="#e8f5e9"];
+    drift [label="drift.py\nsliding-window KS / TVD", fillcolor="#e8f5e9"];
+    met [label="metrics.py\nPrometheus instruments", fillcolor="#e8f5e9"]; }
+
+  subgraph cluster_pipe { label="Training pipeline  (DVC DAG)"; style="rounded,dashed"; color="#6a1b9a";
+    raw [label="raw CSV\n(DVC-tracked)", fillcolor="#f3e5f5"];
+    prep [label="prepare\ningest→validate→clean→\nlabel→split→write", fillcolor="#f3e5f5"];
+    train [label="train\nCV · compare 3 models ·\nselect by CV ROC-AUC", fillcolor="#f3e5f5"];
+    test [label="test\npytest → report", fillcolor="#f3e5f5"]; }
+
+  mlflow [label="MLflow\nruns · params · metrics ·\nartifacts · model registry", fillcolor="#fff3e0"];
+  art [label="models/ + reports/\nmodel.joblib · metadata ·\ndrift_baseline · metrics", fillcolor="#fffde7"];
+  prom [label="Prometheus", fillcolor="#fce4ec"]; graf [label="Grafana", fillcolor="#fce4ec"];
+
+  user -> ui; ui -> cl; cl -> api [label="HTTP/JSON"];
+  api -> pred; api -> drift; api -> met;
+  raw -> prep -> train -> test; train -> mlflow; train -> art; art -> pred [label="load at start"];
+  art -> api [label="/pipeline/*", style=dashed];
+  met -> prom [label="GET /metrics\n(15 s)"]; prom -> graf;
+  user -> graf [style=dashed, label="dashboards"]; user -> mlflow [style=dashed, label="experiments"];
+}

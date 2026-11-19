@@ -1,0 +1,23 @@
+groups:
+  - name: startup-outcome
+    rules:
+      - alert: BackendDown
+        expr: up{job="startup-outcome-backend"} == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations: { summary: "Prediction backend is not reachable" }
+      - alert: HighErrorRate
+        expr: sum(rate(startup_errors_total[5m])) / clamp_min(sum(rate(startup_http_requests_total[5m])), 1e-9) > 0.1
+        for: 5m
+        labels: { severity: warning }
+        annotations: { summary: "More than 10% of requests are failing" }
+      - alert: SlowPredictions
+        expr: histogram_quantile(0.95, sum(rate(startup_prediction_latency_seconds_bucket[5m])) by (le)) > 0.5
+        for: 5m
+        labels: { severity: warning }
+        annotations: { summary: "p95 prediction latency above 500 ms" }
+      - alert: DataDriftDetected
+        expr: startup_drifted_features > 0
+        for: 2m
+        labels: { severity: warning }
+        annotations: { summary: "Input data drift detected - review or retrain the model" }

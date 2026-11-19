@@ -1,0 +1,39 @@
+{
+  "model_name": "random_forest",
+  "trained_at": "2026-11-19T15:57:33.758941+00:00",
+  "mlflow_parent_run_id": "b5b077ffe6e641b1ba524addad74800b",
+  "mlflow_model_run_id": "a3867f64918347c19e4c844376e8a944",
+  "tracking_backend": "mlflow",
+  "git_commit": "5d7bb6045995a450553f114c757a62489e3ff98d",
+  "train_data_sha256": "31d2c4ffdc59ccd3796bd1fbd4a3d7f23eb6014e92824f26fc70fa99a958264e",
+  "n_train": 737,
+  "n_test": 185,
+  "raw_feature_columns": [
+    "age_first_funding_year",
+    "age_last_funding_year",
+    "age_first_milestone_year",
+    "age_last_milestone_year",
+    "relationships",
+    "funding_rounds",
+    "funding_total_usd",
+    "milestones",
+    "avg_participants",
+    "has_VC",
+    "has_angel",
+    "has_roundA",
+    "has_roundB",
+    "has_roundC",
+    "has_roundD",
+    "is_top500",
+    "state_code",
+    "category_code"
+  ],
+  "test_metrics": {
+    "accuracy": 0.7459,
+    "precision": 0.8288,
+    "recall": 0.7667,
+    "f1": 0.7965,
+    "roc_auc": 0.8378
+  },
+  "cv_roc_auc_mean": 0.8175
+}
