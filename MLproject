@@ -1,0 +1,12 @@
+name: startup-outcome-aiops
+
+# Identical dev/test environments: MLflow builds this environment for every run.
+python_env: python_env.yaml
+
+entry_points:
+  prepare:
+    command: "python -m src.data.prepare"
+  train:
+    command: "python -m src.training.train"
+  main:
+    command: "python -m src.data.prepare && python -m src.training.train"

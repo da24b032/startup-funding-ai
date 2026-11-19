@@ -1,132 +1,88 @@
-# Startup Success Prediction and MLOps Monitoring System
+# Startup Outcome Prediction — an AIOps application
 
-## 1. Project Overview
+Predicts whether a startup will be **acquired** or **closed** from 18 plain-language inputs (funding, investors, milestones, location, industry). Built as an end-to-end AIOps project: reproducible data + training pipeline (DVC), tracked experiments (MLflow), a REST backend (FastAPI), a separate non-technical web UI (Streamlit), and live monitoring with drift detection (Prometheus + Grafana), all containerised with Docker Compose. No cloud services are used.
 
-An end-to-end machine learning system designed to predict whether a startup will be acquired or closed. The project combines machine learning, explainable AI, interactive prediction, API-based model serving and monitoring.
-
-## 2. System Architecture
-
-The system consists of three major layers:
-
-### A. Machine Learning
-- Startup dataset preprocessing and cleaning
-- Feature engineering
-- Classical machine learning model comparison
-- Artificial neural networks and deep learning experiments
-- Random Forest as the selected classical model
-- SHAP-based model explainability
-
-### B. Application and Model Serving
-- Interactive Streamlit dashboard
-- FastAPI-based startup prediction service
-- Single and batch prediction endpoints
-- Input feature validation
-- Prediction probabilities and response latency
-
-### C. Monitoring and MLOps
-- Prometheus metrics collection
-- Grafana monitoring dashboard
-- Prediction count monitoring
-- Prediction latency monitoring
-- Docker Compose configuration for supporting services
-- Automated test suite
-
-## 3. Selected Model
-
-The selected model is a Random Forest classifier.
-
-Original project results:
-- Accuracy: 81.5%
-- ROC-AUC: 0.909
-
-Independent test-set evaluation in the current environment:
-- Accuracy: 81.15%
-- Precision: 78.64%
-- Recall: 85.26%
-- F1-score: 81.82%
-- ROC-AUC: 0.9066
-
-The target classes are:
-- 1: Acquired
-- 0: Closed
-
-## 4. Technology Stack
-
-| Area | Technologies |
+| | |
 |---|---|
-| Programming | Python |
-| Data processing | Pandas, NumPy |
-| Machine learning | Scikit-learn |
-| Deep learning | TensorFlow, Keras |
-| Explainability | SHAP, LIME |
-| Frontend | Streamlit |
-| API | FastAPI, Uvicorn |
-| Monitoring | Prometheus, Grafana |
-| Containerisation | Docker, Docker Compose |
-| Testing | Pytest |
+| **Target** | `acquired` (1) vs `closed` (0) — approved target. Not a forecast of the next funding round. |
+| **Data** | 923 startups → 922 after de-duplication (64.6 % acquired) |
+| **Served model** | Random forest, chosen on 5-fold CV ROC-AUC (0.8175) among logistic regression, random forest, gradient boosting |
+| **Held-out test** | ROC-AUC **0.838**, accuracy 0.746, precision 0.829, recall 0.767, F1 0.797 (185 startups, touched once) |
+| **Latency** | ≈ 24 ms median per single prediction |
+| **Tests** | 40 automated, all passing (`reports/test_report.xml`) |
 
-## 5. Running the Applications
+> Metrics are measured on a split made **before** any fitting, with **no oversampling**, so they describe real startups only. With ~185 test rows expect roughly ±0.05 uncertainty on any single metric.
 
-### Streamlit dashboard
+## Quick start (local)
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
 
-From the startup project directory:
+dvc repro                 # prepare -> train -> test  (writes models/, reports/, mlruns/)
+make serve                # backend  http://localhost:8000  (docs at /docs)
+make ui                   # frontend http://localhost:8501  (new terminal)
+make mlflow-ui            # experiments http://localhost:5000 (optional)
+```
+Without DVC you can run the stages directly: `make data && make train`.
 
-    cd ~/startup-funding-ai/Success-Prediction-System
-    streamlit run app.py
+## Quick start (Docker)
+```bash
+docker compose --profile train run --rm trainer   # builds data + model once
+docker compose up --build
+```
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:8501 |
+| Backend API / docs | http://localhost:8000 · `/docs` |
+| MLflow | http://localhost:5000 |
+| Prometheus | http://localhost:9090 |
+| Grafana | http://localhost:3000 (dashboard *Startup Outcome Service*; admin/admin) |
 
-Open http://localhost:8501
+The frontend reaches the backend **only** through `BACKEND_URL` (REST). The backend image contains no UI code and the frontend image contains no model code.
 
-### Startup prediction API
+## Repository layout
+```
+params.yaml              single source of truth for all pipeline parameters
+dvc.yaml / dvc.lock      pipeline DAG: prepare -> train -> test
+MLproject, python_env.yaml   MLflow Project (identical dev/test environments)
+data/raw/startup_data.csv.dvc   raw data, versioned by DVC (local remote .dvc-storage)
+src/
+  config.py              params + paths + logging
+  data/                  schema.py (contract + validation), prepare.py (data pipeline)
+  features/              engineering.py (StartupFeatureBuilder, shared by train + serve)
+  training/              train.py (CV, comparison, selection, MLflow logging, artifacts)
+  tracking/              tracker.py (MLflow wrapper), run_log.py (pipeline run history)
+  serving/               api.py, predictor.py, schemas.py, field_meta.py
+  monitoring/            drift.py, metrics.py
+frontend/                Streamlit app: client.py (REST only), ui.py, app.py, pages/
+monitoring/              prometheus.yml, alerts.yml, Grafana provisioning + dashboard
+tests/                   40 tests (unit, API, pipeline)
+docs/                    the five mandatory documents + diagrams
+Dockerfile.backend, Dockerfile.frontend, docker-compose.yml, Makefile
+```
 
-From the MLOps template directory, with the project virtual environment activated:
+## Mandatory documents
+1. [Architecture diagram + block explanation](docs/01_architecture.md)
+2. [High-level design](docs/02_high_level_design.md)
+3. [Low-level design (endpoints, I/O)](docs/03_low_level_design.md)
+4. [Test plan, cases and report](docs/04_test_plan_and_cases.md)
+5. [User manual (non-technical)](docs/05_user_manual.md)
 
-    cd ~/startup-funding-ai/mlops-template
-    uvicorn src.serving.startup_api:app --host 0.0.0.0 --port 8000
+Also: [rubric checklist & viva preparation](docs/06_rubric_and_viva.md).
 
-API documentation: http://localhost:8000/docs
+## Reproducibility
+Every experiment is tied to **(git commit, training-data SHA-256, MLflow run id)**, stored as MLflow tags and in `models/model_metadata.json`, and shown by `GET /model/info` and the Pipeline Console. To reproduce: `git checkout <commit> && dvc pull && dvc repro`.
 
-Health check: http://localhost:8000/health
+## Data source
+The dataset is a public startup dataset (923 companies, Crunchbase-derived fields) published on Kaggle by Mohammed Hasnaine, used here for educational purposes under its original terms.
 
-Prometheus metrics: http://localhost:8000/metrics
+## Limitations
+Small dataset; US-centric and historical; label is acquired vs closed; explanations describe the model, not causes; input-drift alerts indicate change, not accuracy loss. Not suitable as the sole basis for investment, lending or hiring decisions.
 
-### Monitoring
+## Optional uncertainty estimate
 
-- Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000
-- MLflow service: http://localhost:5000
+After installing the pinned project dependencies, run `python scripts/bootstrap_ci.py --n-resamples 5000` to calculate a seeded percentile-bootstrap 95% confidence interval for held-out ROC-AUC. The script requires scikit-learn 1.9.1, matching the serialized model artifact.
 
-## 6. Testing
+## Final local verification and demo
 
-The existing MLOps template test suite was executed using Pytest.
-
-Result: 22 passed.
-
-The custom startup prediction API was also manually verified through its health endpoint, prediction endpoint and Prometheus metrics endpoint.
-
-## 7. Implementation Notes and Limitations
-
-- The startup prediction API loads the existing trained Random Forest model and expects its 41 engineered and scaled features.
-- The startup API currently runs directly in the Python virtual environment.
-- The existing Dockerfile still launches the original customer-churn API; it has not yet been adapted to launch the startup API.
-- The original template's synthetic churn training and feature-engineering pipeline remains separate from the startup prediction pipeline.
-- Startup-specific drift detection and MLflow experiment tracking have not yet been integrated and verified.
-- The original dataset and model evaluation results are reported separately from the independent test-set evaluation.
-
-## 8. Project Structure
-
-    startup-funding-ai/
-    ├── README.md
-    ├── Success-Prediction-System/
-    │   ├── app.py
-    │   ├── models/
-    │   └── outputs/
-    └── mlops-template/
-        ├── src/
-        │   └── serving/
-        │       └── startup_api.py
-        ├── tests/
-        ├── monitoring/
-        ├── docker-compose.yml
-        └── Dockerfile
-
-<small>Built upon the dataset by Mohammed Hasnaine and the MLOps template by Maniswaroop M; original licences and attribution are retained.</small>
+See [the local operations runbook](docs/07_demo_and_ops_runbook.md), [the custom data-pipeline decision](docs/08_data_engineering_decision.md), and [the viva demo script](docs/09_viva_demo_script.md).

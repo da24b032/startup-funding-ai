@@ -1,0 +1,20 @@
+# Backend: FastAPI inference service + pipeline code (training can run in the same image).
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PROJECT_ROOT=/app
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY params.yaml dvc.yaml MLproject python_env.yaml ./
+COPY src ./src
+
+# models/, reports/ and data/ are mounted as volumes by docker-compose.
+EXPOSE 8000
+HEALTHCHECK --interval=15s --timeout=5s --retries=5 \
+  CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"
+CMD ["uvicorn", "src.serving.api:app", "--host", "0.0.0.0", "--port", "8000"]

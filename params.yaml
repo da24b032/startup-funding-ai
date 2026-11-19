@@ -1,0 +1,51 @@
+# Single source of truth for pipeline parameters.
+# DVC tracks these keys, so changing a value re-runs only the affected stages.
+
+data:
+  raw_path: data/raw/startup_data.csv
+  processed_dir: data/processed
+  test_size: 0.2
+  random_state: 42
+  dedupe_key: object_id
+
+train:
+  # Model promoted to the serving artifact (chosen on train-only CV, never on the test set).
+  selected_model: auto   # "auto" = best mean cross-validated ROC-AUC on the training set
+  models_to_compare:
+    - logistic_regression
+    - random_forest
+    - gradient_boosting
+  cv_folds: 5
+  random_state: 42
+  random_forest:
+    n_estimators: 300
+    max_depth: null
+    min_samples_leaf: 2
+    class_weight: balanced
+  gradient_boosting:
+    n_estimators: 200
+    learning_rate: 0.05
+    max_depth: 3
+  logistic_regression:
+    C: 1.0
+    max_iter: 1000
+    class_weight: balanced
+
+mlflow:
+  tracking_uri: mlruns
+  experiment_name: startup-outcome-prediction
+  registered_model_name: startup-outcome-classifier
+
+serving:
+  model_path: models/model.joblib
+  metadata_path: models/model_metadata.json
+  baseline_path: models/drift_baseline.json
+  positive_threshold: 0.5
+  max_batch_size: 500
+
+monitoring:
+  drift_p_value_threshold: 0.05
+  drift_min_samples: 30
+  drift_window_size: 500
+  categorical_tvd_threshold: 0.30   # total-variation distance that flags categorical drift
+  check_every_n_predictions: 25

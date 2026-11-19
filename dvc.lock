@@ -1,0 +1,163 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m src.data.prepare
+    deps:
+    - path: data/raw/startup_data.csv
+      hash: md5
+      md5: 817a0130e2d3f763af4632afed46654a
+      size: 210063
+    - path: src/config.py
+      hash: md5
+      md5: c5c18eda5caf4d1362dc47c7f2fd9a8f
+      size: 1376
+    - path: src/data/prepare.py
+      hash: md5
+      md5: 245eaba0ea4e2d12532f8d9a063b8fd5
+      size: 4536
+    - path: src/data/schema.py
+      hash: md5
+      md5: b74977d1d3785e797d252bffbc133c27
+      size: 3306
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/startup_data.csv
+          processed_dir: data/processed
+          test_size: 0.2
+          random_state: 42
+          dedupe_key: object_id
+    outs:
+    - path: data/processed/data_report.json
+      hash: md5
+      md5: 8335bf69d49490bb98baeef852a65461
+      size: 1316
+    - path: data/processed/test.csv
+      hash: md5
+      md5: b8c97509876cd245db7f6c91136089dc
+      size: 13615
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9972064cbd19d19294f06a7656fb67c7
+      size: 54106
+  train:
+    cmd: python -m src.training.train
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: b8c97509876cd245db7f6c91136089dc
+      size: 13615
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9972064cbd19d19294f06a7656fb67c7
+      size: 54106
+    - path: src/config.py
+      hash: md5
+      md5: c5c18eda5caf4d1362dc47c7f2fd9a8f
+      size: 1376
+    - path: src/data/schema.py
+      hash: md5
+      md5: b74977d1d3785e797d252bffbc133c27
+      size: 3306
+    - path: src/features/engineering.py
+      hash: md5
+      md5: e2c99c1ec3e1857cd75a2e1ca2ad6b0a
+      size: 5123
+    - path: src/tracking/run_log.py
+      hash: md5
+      md5: d100c3f2f367ffb70b392c7031e74e6e
+      size: 4047
+    - path: src/tracking/tracker.py
+      hash: md5
+      md5: 9eb120c039baca5607908dfab58660cd
+      size: 5661
+    - path: src/training/train.py
+      hash: md5
+      md5: a60c8639f18e5182b5eed0ee402fe7b6
+      size: 15841
+    params:
+      params.yaml:
+        mlflow:
+          tracking_uri: mlruns
+          experiment_name: startup-outcome-prediction
+          registered_model_name: startup-outcome-classifier
+        train:
+          selected_model: auto
+          models_to_compare:
+          - logistic_regression
+          - random_forest
+          - gradient_boosting
+          cv_folds: 5
+          random_state: 42
+          random_forest:
+            n_estimators: 300
+            max_depth:
+            min_samples_leaf: 2
+            class_weight: balanced
+          gradient_boosting:
+            n_estimators: 200
+            learning_rate: 0.05
+            max_depth: 3
+          logistic_regression:
+            C: 1.0
+            max_iter: 1000
+            class_weight: balanced
+    outs:
+    - path: models/drift_baseline.json
+      hash: md5
+      md5: dcd39056d71f8f5db58a7fb56d327483
+      size: 21022
+    - path: models/model.joblib
+      hash: md5
+      md5: 4e81b92ecb73182f3bfaace62d4251f6
+      size: 4957906
+    - path: models/model_metadata.json
+      hash: md5
+      md5: 76b8a874e767b5b1ecb0f3bf762351fb
+      size: 1015
+    - path: reports/confusion_matrix.png
+      hash: md5
+      md5: df1f2f39a8fa910dc9f7663c04ffbbda
+      size: 22102
+    - path: reports/feature_importance.json
+      hash: md5
+      md5: ab3b92bc81e5c09e9d40268f22346e76
+      size: 1208
+    - path: reports/feature_importance.png
+      hash: md5
+      md5: b5623ad5a1315c688bb97cb8db03f96f
+      size: 51092
+    - path: reports/metrics.json
+      hash: md5
+      md5: 5c3041788d751d0eb6870cd6845417f7
+      size: 394
+    - path: reports/model_comparison.csv
+      hash: md5
+      md5: 7c64eea4f8ef17879265e1425e00291e
+      size: 436
+    - path: reports/roc_curves.png
+      hash: md5
+      md5: f4a38042f04a03fd60fc0945cef51f07
+      size: 48840
+  test:
+    cmd: python -m pytest tests -q --junitxml=reports/test_report.xml
+    deps:
+    - path: models/model.joblib
+      hash: md5
+      md5: 4e81b92ecb73182f3bfaace62d4251f6
+      size: 4957906
+    - path: src
+      hash: md5
+      md5: b1f47f705680f74530f778c7b4e2e8a5.dir
+      size: 79824
+      nfiles: 20
+    - path: tests
+      hash: md5
+      md5: 2056da192d06860eb091a41dc058d97a.dir
+      size: 13304
+      nfiles: 8
+    outs:
+    - path: reports/test_report.xml
+      hash: md5
+      md5: 37ef669755bab5389c215614e62a9bd3
+      size: 4291

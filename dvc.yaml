@@ -1,0 +1,65 @@
+# DVC pipeline = the CI/reproducibility DAG for this project.
+# `dvc repro` re-runs only stages whose code, data or params changed.
+# `dvc dag` prints this graph (include it in the report).
+
+stages:
+  prepare:
+    cmd: python -m src.data.prepare
+    deps:
+      - data/raw/startup_data.csv
+      - src/data/prepare.py
+      - src/data/schema.py
+      - src/config.py
+    params:
+      - data
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+    metrics:
+      - data/processed/data_report.json:
+          cache: false
+
+  train:
+    cmd: python -m src.training.train
+    deps:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - src/training/train.py
+      - src/features/engineering.py
+      - src/tracking/tracker.py
+      - src/tracking/run_log.py
+      - src/data/schema.py
+      - src/config.py
+    params:
+      - train
+      - mlflow
+    outs:
+      - models/model.joblib
+      - models/model_metadata.json
+      - models/drift_baseline.json
+      - reports/confusion_matrix.png:
+          cache: false
+      - reports/roc_curves.png:
+          cache: false
+      - reports/feature_importance.png:
+          cache: false
+      - reports/feature_importance.json:
+          cache: false
+    metrics:
+      - reports/metrics.json:
+          cache: false
+    plots:
+      - reports/model_comparison.csv:
+          x: model
+          y: cv_roc_auc_mean
+          cache: false
+
+  test:
+    cmd: python -m pytest tests -q --junitxml=reports/test_report.xml
+    deps:
+      - src
+      - tests
+      - models/model.joblib
+    outs:
+      - reports/test_report.xml:
+          cache: false

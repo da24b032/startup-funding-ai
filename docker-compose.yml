@@ -1,0 +1,75 @@
+# Two application services (backend, frontend) plus the MLOps tooling.
+#   docker compose up --build                       -> app + monitoring + MLflow UI
+#   docker compose --profile train run --rm trainer -> (re)build data + model inside Docker
+services:
+  backend:
+    build: { context: ., dockerfile: Dockerfile.backend }
+    ports: ["8000:8000"]
+    volumes:
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./data:/app/data
+      - ./mlruns:/app/mlruns
+    restart: unless-stopped
+
+  frontend:
+    build: { context: ., dockerfile: Dockerfile.frontend }
+    ports: ["8501:8501"]
+    environment:
+      BACKEND_URL: http://backend:8000     # the ONLY coupling to the backend
+      MLFLOW_URL: http://localhost:5000
+      GRAFANA_URL: http://localhost:3000
+      PROMETHEUS_URL: http://localhost:9090
+    depends_on:
+      backend: { condition: service_healthy }
+    restart: unless-stopped
+
+  trainer:
+    build: { context: ., dockerfile: Dockerfile.backend }
+    command: ["sh", "-c", "python -m src.data.prepare && python -m src.training.train"]
+    volumes:
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./data:/app/data
+      - ./mlruns:/app/mlruns
+    profiles: ["train"]
+
+  # Optional: the registered model exposed by MLflow's own scoring server (POST /invocations).
+  # Works for models trained by the `trainer` service (artifact paths are /app/mlruns/...).
+  mlflow-model:
+    build: { context: ., dockerfile: Dockerfile.backend }
+    command: ["mlflow", "models", "serve", "-m", "models:/startup-outcome-classifier/latest",
+              "--env-manager", "local", "--host", "0.0.0.0", "--port", "5001"]
+    environment:
+      MLFLOW_TRACKING_URI: file:///app/mlruns
+    ports: ["5001:5001"]
+    volumes:
+      - ./mlruns:/app/mlruns
+    profiles: ["mlflow-serve"]
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.17.0
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri file:///mlruns
+    ports: ["5000:5000"]
+    volumes:
+      - ./mlruns:/mlruns
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports: ["9090:9090"]
+    depends_on: [backend]
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on: [prometheus]

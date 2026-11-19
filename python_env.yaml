@@ -1,0 +1,7 @@
+# Used by MLproject: MLflow builds this environment for every `mlflow run`,
+# so dev and test runs use identical dependencies.
+python: "3.11"
+build_dependencies:
+  - pip
+dependencies:
+  - -r requirements.txt
