@@ -1,0 +1,21 @@
+{
+  "selected_model": "random_forest",
+  "selection_rule": "highest mean 5-fold CV ROC-AUC on training data",
+  "test_accuracy": 0.7459,
+  "test_precision": 0.8288,
+  "test_recall": 0.7667,
+  "test_f1": 0.7965,
+  "test_roc_auc": 0.8378,
+  "cv_roc_auc_mean": 0.8175,
+  "latency_ms_single_row": 201.665,
+  "confusion_matrix": [
+    [
+      46,
+      19
+    ],
+    [
+      28,
+      92
+    ]
+  ]
+}

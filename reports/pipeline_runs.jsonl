@@ -1,0 +1,4 @@
+{"stage": "prepare", "timestamp": "2026-11-19T12:52:08.223267+00:00", "status": "success", "duration_seconds": 0.042, "throughput_rows_per_second": 23967.6, "rows": 922}
+{"stage": "train", "timestamp": "2026-11-19T12:52:11.389299+00:00", "status": "success", "duration_seconds": 28.928, "selected_model": "random_forest"}
+{"stage": "prepare", "timestamp": "2026-11-19T15:54:58.371586+00:00", "status": "success", "duration_seconds": 0.234, "throughput_rows_per_second": 4100.5, "rows": 922}
+{"stage": "train", "timestamp": "2026-11-19T15:55:08.114190+00:00", "status": "success", "duration_seconds": 145.663, "selected_model": "random_forest"}
