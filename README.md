@@ -68,8 +68,6 @@ Dockerfile.backend, Dockerfile.frontend, docker-compose.yml, Makefile
 4. [Test plan, cases and report](docs/04_test_plan_and_cases.md)
 5. [User manual (non-technical)](docs/05_user_manual.md)
 
-Also: [rubric checklist & viva preparation](docs/06_rubric_and_viva.md).
-
 ## Reproducibility
 Every experiment is tied to **(git commit, training-data SHA-256, MLflow run id)**, stored as MLflow tags and in `models/model_metadata.json`, and shown by `GET /model/info` and the Pipeline Console. To reproduce: `git checkout <commit> && dvc pull && dvc repro`.
 
