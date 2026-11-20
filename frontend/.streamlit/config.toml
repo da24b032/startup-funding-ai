@@ -1,0 +1,9 @@
+[theme]
+primaryColor = "#1f4e79"
+
+[server]
+headless = true
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false

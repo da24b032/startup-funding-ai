@@ -1,0 +1,4 @@
+model,cv_roc_auc_mean,cv_roc_auc_std,cv_accuracy_mean,cv_f1_mean,test_accuracy,test_precision,test_recall,test_f1,test_roc_auc,train_seconds,latency_ms_single_row
+logistic_regression,0.8,0.0215,0.7395,0.788,0.7135,0.8602,0.6667,0.7512,0.8005,0.032,28.747
+random_forest,0.8175,0.0297,0.7761,0.83,0.7459,0.8288,0.7667,0.7965,0.8378,2.264,201.665
+gradient_boosting,0.8157,0.0129,0.7857,0.842,0.7838,0.8279,0.8417,0.8347,0.855,0.648,14.191
