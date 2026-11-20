@@ -1,4 +1,4 @@
-# Startup Outcome Prediction — an AIOps application
+# Startup Outcome Prediction 
 
 Predicts whether a startup will be **acquired** or **closed** from 18 plain-language inputs (funding, investors, milestones, location, industry). Built as an end-to-end AIOps project: reproducible data + training pipeline (DVC), tracked experiments (MLflow), a REST backend (FastAPI), a separate non-technical web UI (Streamlit), and live monitoring with drift detection (Prometheus + Grafana), all containerised with Docker Compose. No cloud services are used.
 
