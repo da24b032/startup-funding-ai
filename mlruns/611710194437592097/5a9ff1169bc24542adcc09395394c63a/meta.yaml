@@ -1,0 +1,15 @@
+artifact_uri: /home/visaka/Downloads/startup-outcome-aiops/mlruns/611710194437592097/5a9ff1169bc24542adcc09395394c63a/artifacts
+end_time: 1795103775359
+entry_point_name: ''
+experiment_id: '611710194437592097'
+lifecycle_stage: active
+run_id: 5a9ff1169bc24542adcc09395394c63a
+run_name: gradient_boosting
+run_uuid: 5a9ff1169bc24542adcc09395394c63a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795103761568
+status: 3
+tags: []
+user_id: visaka

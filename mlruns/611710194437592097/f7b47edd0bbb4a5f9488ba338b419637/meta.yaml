@@ -1,0 +1,15 @@
+artifact_uri: /home/visaka/Downloads/startup-outcome-aiops/mlruns/611710194437592097/f7b47edd0bbb4a5f9488ba338b419637/artifacts
+end_time: 1795103724840
+entry_point_name: ''
+experiment_id: '611710194437592097'
+lifecycle_stage: active
+run_id: f7b47edd0bbb4a5f9488ba338b419637
+run_name: logistic_regression
+run_uuid: f7b47edd0bbb4a5f9488ba338b419637
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795103708455
+status: 3
+tags: []
+user_id: visaka

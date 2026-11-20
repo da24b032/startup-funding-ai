@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+.env
+mlruns/
+mlruns_local/
+mlartifacts/
+.dvc-storage/
+reports/pipeline_runs.jsonl

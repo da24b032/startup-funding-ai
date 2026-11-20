@@ -1,0 +1,74 @@
+{
+  "relationships": {
+    "mean": 0.08215,
+    "std": 0.02092
+  },
+  "age_first_funding_year": {
+    "mean": 0.01755,
+    "std": 0.00732
+  },
+  "funding_total_usd": {
+    "mean": 0.01339,
+    "std": 0.00667
+  },
+  "age_last_milestone_year": {
+    "mean": 0.01323,
+    "std": 0.00907
+  },
+  "age_last_funding_year": {
+    "mean": 0.01016,
+    "std": 0.00789
+  },
+  "milestones": {
+    "mean": 0.00795,
+    "std": 0.00949
+  },
+  "is_top500": {
+    "mean": 0.00226,
+    "std": 0.00603
+  },
+  "has_roundC": {
+    "mean": 0.00117,
+    "std": 0.00165
+  },
+  "has_angel": {
+    "mean": 0.00048,
+    "std": 0.00158
+  },
+  "has_roundB": {
+    "mean": -0.00165,
+    "std": 0.00113
+  },
+  "category_code": {
+    "mean": -0.00229,
+    "std": 0.00195
+  },
+  "has_roundD": {
+    "mean": -0.00231,
+    "std": 0.00128
+  },
+  "has_roundA": {
+    "mean": -0.00241,
+    "std": 0.00142
+  },
+  "state_code": {
+    "mean": -0.00329,
+    "std": 0.0023
+  },
+  "age_first_milestone_year": {
+    "mean": -0.0036,
+    "std": 0.0067
+  },
+  "has_VC": {
+    "mean": -0.00487,
+    "std": 0.00379
+  },
+  "funding_rounds": {
+    "mean": -0.00556,
+    "std": 0.00432
+  },
+  "avg_participants": {
+    "mean": -0.00909,
+    "std": 0.0066
+  }
+}

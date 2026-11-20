@@ -1,0 +1,15 @@
+artifact_uri: /home/visaka/Downloads/startup-outcome-aiops/mlruns/611710194437592097/b5b077ffe6e641b1ba524addad74800b/artifacts
+end_time: 1795103853765
+entry_point_name: ''
+experiment_id: '611710194437592097'
+lifecycle_stage: active
+run_id: b5b077ffe6e641b1ba524addad74800b
+run_name: training-pipeline
+run_uuid: b5b077ffe6e641b1ba524addad74800b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795103708435
+status: 3
+tags: []
+user_id: visaka

@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1795103853647
+current_stage: None
+description: null
+last_updated_timestamp: 1795103853647
+name: startup-outcome-classifier
+run_id: b5b077ffe6e641b1ba524addad74800b
+run_link: null
+source: /home/visaka/Downloads/startup-outcome-aiops/mlruns/611710194437592097/b5b077ffe6e641b1ba524addad74800b/artifacts/selected_model
+status: READY
+status_message: null
+storage_location: /home/visaka/Downloads/startup-outcome-aiops/mlruns/611710194437592097/b5b077ffe6e641b1ba524addad74800b/artifacts/selected_model
+user_id: null
+version: 1

@@ -1,0 +1,15 @@
+artifact_uri: /home/visaka/Downloads/startup-outcome-aiops/mlruns/611710194437592097/a3867f64918347c19e4c844376e8a944/artifacts
+end_time: 1795103761562
+entry_point_name: ''
+experiment_id: '611710194437592097'
+lifecycle_stage: active
+run_id: a3867f64918347c19e4c844376e8a944
+run_name: random_forest
+run_uuid: a3867f64918347c19e4c844376e8a944
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1795103724849
+status: 3
+tags: []
+user_id: visaka

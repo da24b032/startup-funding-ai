@@ -1,0 +1,62 @@
+{
+  "rows_ingested": 923,
+  "rows_after_cleaning": 922,
+  "duplicates_removed": 1,
+  "tolerated_issues": {
+    "negative_funding_ages": 46,
+    "missing_milestone_age": 152,
+    "duplicate_ids": 1
+  },
+  "train_rows": 737,
+  "test_rows": 185,
+  "train_acquired_rate": 0.6459,
+  "test_acquired_rate": 0.6486,
+  "feature_columns": [
+    "age_first_funding_year",
+    "age_last_funding_year",
+    "age_first_milestone_year",
+    "age_last_milestone_year",
+    "relationships",
+    "funding_rounds",
+    "funding_total_usd",
+    "milestones",
+    "avg_participants",
+    "has_VC",
+    "has_angel",
+    "has_roundA",
+    "has_roundB",
+    "has_roundC",
+    "has_roundD",
+    "is_top500",
+    "state_code",
+    "category_code"
+  ],
+  "stages": {
+    "ingest": {
+      "seconds": 0.03369,
+      "rows_per_second": 29.7
+    },
+    "validate": {
+      "seconds": 0.008187,
+      "rows_per_second": 112735.6
+    },
+    "clean": {
+      "seconds": 0.005487,
+      "rows_per_second": 168214.2
+    },
+    "label": {
+      "seconds": 0.009586,
+      "rows_per_second": 96181.3
+    },
+    "split": {
+      "seconds": 0.140091,
+      "rows_per_second": 6581.4
+    },
+    "write": {
+      "seconds": 0.024661,
+      "rows_per_second": 37386.4
+    }
+  },
+  "pipeline_seconds": 0.2251,
+  "pipeline_throughput_rows_per_second": 4100.5
+}
