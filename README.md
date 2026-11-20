@@ -81,6 +81,3 @@ Small dataset; US-centric and historical; label is acquired vs closed; explanati
 
 After installing the pinned project dependencies, run `python scripts/bootstrap_ci.py --n-resamples 5000` to calculate a seeded percentile-bootstrap 95% confidence interval for held-out ROC-AUC. The script requires scikit-learn 1.9.1, matching the serialized model artifact.
 
-## Final local verification and demo
-
-See [the local operations runbook](docs/07_demo_and_ops_runbook.md), [the custom data-pipeline decision](docs/08_data_engineering_decision.md), and [the viva demo script](docs/09_viva_demo_script.md).
