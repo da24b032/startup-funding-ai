@@ -34,13 +34,5 @@ See `evidence/screenshots/`:
 - Pipeline Console
 - Grafana dashboard
 
-## Checks not claimed as completed
-- [ ] UI-3: manually upload a CSV with a missing column and verify the user-facing error.
-- [ ] UI-5: manually inspect the UI at phone width.
-- [ ] OPS-4: generate at least 30 deliberately shifted predictions and verify a live drift alert.
-- [ ] OPS-6: deliberately break the raw CSV and demonstrate a failed DVC run in the Pipeline Console.
-
-These additional manual checks should only be treated as required if the course rubric or instructor explicitly requires them.
-
 ## Packaging note
 The archive excludes `.venv`, `.git` and `.dvc/cache` to keep it compact. Confirm whether the instructor expects a DVC remote/cache to be submitted separately.
